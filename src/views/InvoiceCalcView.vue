@@ -7,11 +7,11 @@
         @addProductToList="addProductToList"
     ></AddProductForm>
 
-    <section class="app-table-container">
+    <section class="app-table__container">
       <table class="app-table">
-        <thead>
-        <tr>
-          <th>
+        <thead class="app-table__head">
+        <tr class="app-table__head-row">
+          <th class="app-table__head-cell">
             <input
                 type="checkbox"
                 v-model="checkAll"
@@ -19,27 +19,27 @@
                 :disabled="isListEmpty"
             >
           </th>
-          <th class="app-table__main-column">Product name</th>
-          <th>Price</th>
-          <th>Qty</th>
-          <th>Sum</th>
+          <th class="app-table__head-cell app-table__main-column">Product name</th>
+          <th class="app-table__head-cell">Price</th>
+          <th class="app-table__head-cell">Qty</th>
+          <th class="app-table__head-cell">Sum</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="product in productsList" :key="product.id">
-          <td>
+        <tr class="app-table__body-row" v-for="product in productsList" :key="product.id">
+          <td class="app-table__body-cell">
             <input
                 type="checkbox"
                 v-model="product.checked"
             >
           </td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.price | usd }}</td>
-          <td>{{ product.qty }}</td>
-          <td>{{ product.sum | usd }}</td>
+          <td class="app-table__body-cell">{{ product.name }}</td>
+          <td class="app-table__body-cell">{{ product.price | usd }}</td>
+          <td class="app-table__body-cell">{{ product.qty }}</td>
+          <td class="app-table__body-cell">{{ product.sum | usd }}</td>
         </tr>
-        <tr v-if="isListEmpty" class="app-table__no-data">
-          <td colspan="5">No data</td>
+        <tr v-if="isListEmpty" class="app-table__body-row app-table__no-data">
+          <td class="app-table__body-cell" colspan="5">No data</td>
         </tr>
         </tbody>
       </table>
@@ -65,7 +65,7 @@ import AddProductForm from '@/components/AddProductForm.vue';
 import { ProductItem} from '@/types/entities';
 
 export default Vue.extend({
-  name: 'HomeView',
+  name: 'InvoiceCalcView',
   components: {
     AddProductForm
   },
@@ -89,7 +89,7 @@ export default Vue.extend({
       return this.productsList.length === 0;
     },
     isBtnDeleteActive(): boolean {
-      return Boolean(this.productsList.filter(product => product.checked).length);
+      return Boolean(this.productsList.filter((product: ProductItem) => product.checked).length);
     }
   },
   watch: {
@@ -105,10 +105,10 @@ export default Vue.extend({
       this.saveToLS();
     },
     handleCheckAll(): void {
-      this.productsList.forEach(product => product.checked = this.checkAll);
+      this.productsList.forEach((product: ProductItem) => product.checked = this.checkAll);
     },
     removeProducts(): void {
-      this.productsList = this.productsList.filter(product => !product.checked);
+      this.productsList = this.productsList.filter((product: ProductItem) => !product.checked);
       this.saveToLS();
     },
     saveToLS(): void {
@@ -144,16 +144,21 @@ export default Vue.extend({
   margin: 0;
   padding: 0;
   width: 100%;
-  table-layout: fixed;
 
-  thead {
-    th {
+  &__container {
+    overflow-x: auto;
+  }
+
+  &__head {
+    &-cell {
+      font-size: .85em;
       background: $color-table-header;
+      min-width: 100px;
     }
   }
 
-  th,
-  td {
+  &__head-cell,
+  &__body-cell {
     padding: .625em;
     text-align: left;
     border-width: 0 3px;
@@ -161,16 +166,12 @@ export default Vue.extend({
     border-color: $color-black;
   }
 
-  tr:nth-child(odd) {
+  &__body-row:nth-child(odd) {
     background-color: $color-table-row-dark;
   }
 
-  tr:nth-child(even) {
+  &__body-row:nth-child(even) {
     background-color: $color-table-row-light;
-  }
-
-  th {
-    font-size: .85em;
   }
 
   &__main-column {
@@ -180,7 +181,7 @@ export default Vue.extend({
   &__no-data {
     border-top: 3px solid $color-black;
 
-    td {
+    .app-table__body-cell {
       text-align: center;
     }
   }
@@ -190,9 +191,5 @@ export default Vue.extend({
     justify-content: space-between;
     align-items: center;
   }
-}
-
-@media screen and (max-width: 600px) {
-
 }
 </style>
